@@ -1,0 +1,93 @@
+swagger: "2.0"
+info:
+  title: "customer-phone-number-api"
+  description: "Customer Phone Number API"
+  version: "1.0"
+  contact:
+    email: "hagar.zakaria.2011@gmail.com"
+host: "customer-phone-number"
+basePath: "/services"
+tags:
+  - name: "Customer Phone Number"
+    description: Retrives a list of customer phone numbers.List can be filtered by different parameters like country and phone number status.
+schemes:
+- "http"
+paths:
+  /customer/phonenumbers/:
+    get:
+      tags:
+        - "Customer Phone Number"
+      summary: Retrieve customer phone numbers for given parameters
+      description: ''
+      operationId: findCustomerPhoneNumbers
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: X-CMP-Tenant-Id
+          description: ID of the Tenant
+          required: true
+          type: string
+        - in: header
+          name: X-Correlation-Id
+          description: Correlation ID for the current external request
+          required: true
+          type: string
+        - in: query
+          name: countryCode
+          description: "Country code.Example: 237"
+          type: "string"
+        - in: query
+          name: state
+          description: "phone number status whether it is valid for a given country or not"
+          type: "string"
+          enum:
+            - "VALID"
+            - "NOTVALID"
+         
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: 'array'
+            items:
+              $ref: '#/definitions/CustomerPhoneNumber'
+        400:
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"  
+     
+definitions:
+  CustomerPhoneNumber:
+    type: "object"
+    required:
+      - name
+      - phone
+    properties: 
+      name:
+        type: "string"
+        description: "Customer Number"
+      phone:
+        type: "string"
+        
+  ErrorResponse:
+    type: "object"
+    properties:
+      status:
+        properties:
+          statusCategory:
+            type: "string"
+            enum:
+            - "ERROR"
+            - "OK"
+            - "WARNING"
+          statusCode:
+            type: "string"
+          statusMessage:
+            type: "string"
+          additionalInfo:
+            type: "string"
